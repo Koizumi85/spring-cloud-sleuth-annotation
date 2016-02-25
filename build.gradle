@@ -1,0 +1,32 @@
+apply plugin: 'eclipse'
+apply plugin: 'java'
+apply plugin: 'maven-publish'
+
+sourceCompatibility = 1.7
+targetCompatibility = 1.7
+
+group = "de.koizumi"
+version = "0.1.SNAPSHOT"
+dependencies {
+	compile ("org.springframework.cloud:spring-cloud-sleuth-core:1.0.0.BUILD-SNAPSHOT")
+	compile ("org.apache.commons:commons-lang3:3.4")
+}
+
+task wrapper(type: Wrapper) {
+	gradleVersion = '2.11'
+}
+
+repositories {
+	mavenCentral()
+	maven {
+        	url 'http://repo.spring.io/snapshot'
+    	}
+}
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            from components.java
+        }
+    }
+}

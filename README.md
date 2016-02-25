@@ -18,6 +18,15 @@ public class TestClass {
 }
 ```
 
+## Enable it
+
+To use this library, you have to add the following two annotations to one of your configuration files:
+
+```
+@EnableAspectJAutoProxy
+@Import(SleuthAnnotationConfiguration.class)
+```
+
 ## Further features
 
 ### Customize span names

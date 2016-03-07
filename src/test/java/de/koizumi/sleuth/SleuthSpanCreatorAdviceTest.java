@@ -78,6 +78,15 @@ public class SleuthSpanCreatorAdviceTest {
 		Mockito.reset(tracer);
 	}
 	
+	@Test
+	public void shouldCreateSpanWithTagWhenAnnotationOnClassMethod() {
+		testBean.testMethod6("test");
+		
+		Mockito.verify(tracer).addTag(Mockito.eq("testTag6"), Mockito.eq("test"));
+		Mockito.verify(tracer).createSpan(Mockito.eq("testMethod6"), Mockito.<Span> any());
+		Mockito.reset(tracer);
+	}
+	
 	protected static interface TestBeanI {
 		
 		@CreateSleuthSpan
@@ -92,6 +101,8 @@ public class SleuthSpanCreatorAdviceTest {
 		
 		@CreateSleuthSpan(name = "testMethod5")
 		void testMethod5(@SleuthSpanTag("testTag") String test);
+		
+		void testMethod6(String test);
 	}
 	
 	protected static class TestBean implements TestBeanI {
@@ -116,6 +127,12 @@ public class SleuthSpanCreatorAdviceTest {
 		
 		@Override
 		public void testMethod5(String test) {
+		}
+
+		@CreateSleuthSpan(name = "testMethod6")
+		@Override
+		public void testMethod6(@SleuthSpanTag("testTag6") String test) {
+			
 		}
 	}
 	

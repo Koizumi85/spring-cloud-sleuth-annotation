@@ -5,6 +5,7 @@ import de.koizumi.sleuth.annotation.SleuthSpanTag;
 
 public class SleuthAnnotatedParameterContainer {
 
+	private int parameterIndex;
 	private SleuthSpanTag annotation;
 	private Object argument;
 	private Parameter parameter;
@@ -31,6 +32,14 @@ public class SleuthAnnotatedParameterContainer {
 
 	public void setParameter(Parameter parameter) {
 		this.parameter = parameter;
+	}
+
+	public int getParameterIndex() {
+		return parameterIndex;
+	}
+
+	public void setParameterIndex(int parameterIndex) {
+		this.parameterIndex = parameterIndex;
 	}
 
 }

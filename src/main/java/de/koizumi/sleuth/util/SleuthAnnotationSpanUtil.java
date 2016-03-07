@@ -4,11 +4,13 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Predicate;
 
 import org.apache.commons.lang3.StringUtils;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.Signature;
 import org.aspectj.lang.reflect.MethodSignature;
+import org.springframework.aop.support.AopUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.sleuth.Tracer;
 import org.springframework.context.ApplicationContext;
@@ -37,14 +39,39 @@ public class SleuthAnnotationSpanUtil {
 			if (signature instanceof MethodSignature) {
 				MethodSignature ms = (MethodSignature) signature;
 				Method method = ms.getMethod();
+				Method mostSpecificMethod = AopUtils.getMostSpecificMethod(method, pjp.getTarget().getClass());
 
-				List<SleuthAnnotatedParameterContainer> annotatedParametersIndices = findAnnotatedParameters(method,
-						pjp.getArgs());
+				List<SleuthAnnotatedParameterContainer> annotatedParametersIndices = findAnnotatedParameters(
+						mostSpecificMethod, pjp.getArgs());
+				if (!method.equals(mostSpecificMethod)) {
+					List<SleuthAnnotatedParameterContainer> annotatedParametersIndicesForActualMethod = findAnnotatedParameters(
+							method, pjp.getArgs());
+					mergeAnnotatedParameterContainers(annotatedParametersIndices, annotatedParametersIndicesForActualMethod);
+				}
+
 				addAnnotatedArguments(annotatedParametersIndices);
 			}
 
 		} catch (SecurityException e) {
 			e.printStackTrace();
+		}
+	}
+
+	private void mergeAnnotatedParameterContainers(List<SleuthAnnotatedParameterContainer> annotatedParametersIndices,
+			List<SleuthAnnotatedParameterContainer> annotatedParametersIndicesForActualMethod) {
+		for (SleuthAnnotatedParameterContainer container : annotatedParametersIndicesForActualMethod) {
+			final int index = container.getParameterIndex();
+			boolean parameterContained = annotatedParametersIndices.stream()
+					.anyMatch(new Predicate<SleuthAnnotatedParameterContainer>() {
+
+						@Override
+						public boolean test(SleuthAnnotatedParameterContainer t) {
+							return t.getParameterIndex() == index;
+						}
+					});
+			if (!parameterContained) {
+				annotatedParametersIndices.add(container);
+			}
 		}
 	}
 
@@ -89,6 +116,7 @@ public class SleuthAnnotationSpanUtil {
 				container.setAnnotation(annotation);
 				container.setArgument(args[i]);
 				container.setParameter(parameter);
+				container.setParameterIndex(i);
 				result.add(container);
 			}
 			i++;

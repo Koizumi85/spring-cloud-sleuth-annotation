@@ -1,11 +1,13 @@
 package de.koizumi.sleuth;
 
-import org.aspectj.lang.ProceedingJoinPoint;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.SpringApplicationConfiguration;
+import org.springframework.cloud.sleuth.Span;
+import org.springframework.cloud.sleuth.Tracer;
 import org.springframework.cloud.sleuth.autoconfig.TraceAutoConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -14,7 +16,10 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import de.koizumi.sleuth.SleuthSpanCreatorAdviceTest.TestConfiguration;
 import de.koizumi.sleuth.annotation.CreateSleuthSpan;
+import de.koizumi.sleuth.annotation.SleuthSpanTag;
 import de.koizumi.sleuth.config.SleuthAnnotationConfiguration;
+import de.koizumi.sleuth.util.DefaultSleuthSpanCreator;
+import de.koizumi.sleuth.util.SleuthAnnotationSpanUtil;
 import de.koizumi.sleuth.util.SleuthSpanCreator;
 
 @SpringApplicationConfiguration(classes = TestConfiguration.class)
@@ -25,22 +30,52 @@ public class SleuthSpanCreatorAdviceTest {
 	private TestBeanI testBean;
 	
 	@Autowired
-	private SleuthSpanCreator spanCreator;
+	private Tracer tracer;
+	
+	@Before
+	public void setup() {
+		Mockito.when(tracer.isTracing()).thenReturn(true);
+	}
 	
 	@Test
 	public void shouldCreateSpanWhenAnnotationOnInterfaceMethod() {
 		testBean.testMethod();
 		
-		Mockito.verify(spanCreator).createSpan(Mockito.<ProceedingJoinPoint> any(), Mockito.<CreateSleuthSpan> any());
-		Mockito.reset(spanCreator);
+		Mockito.verify(tracer).createSpan(Mockito.eq("TestBeanI/testMethod"), Mockito.<Span> any());
+		Mockito.reset(tracer);
 	}
 	
 	@Test
 	public void shouldCreateSpanWhenAnnotationOnClassMethod() {
 		testBean.testMethod2();
 		
-		Mockito.verify(spanCreator).createSpan(Mockito.<ProceedingJoinPoint> any(), Mockito.<CreateSleuthSpan> any());
-		Mockito.reset(spanCreator);
+		Mockito.verify(tracer).createSpan(Mockito.eq("TestBeanI/testMethod2"), Mockito.<Span> any());
+		Mockito.reset(tracer);
+	}
+	
+	@Test
+	public void shouldCreateSpanWithCustomNameWhenAnnotationOnClassMethod() {
+		testBean.testMethod3();
+		
+		Mockito.verify(tracer).createSpan(Mockito.eq("testMethod3"), Mockito.<Span> any());
+		Mockito.reset(tracer);
+	}
+	
+	@Test
+	public void shouldCreateSpanWithCustomNameWhenAnnotationOnInterfaceMethod() {
+		testBean.testMethod4();
+		
+		Mockito.verify(tracer).createSpan(Mockito.eq("testMethod4"), Mockito.<Span> any());
+		Mockito.reset(tracer);
+	}
+	
+	@Test
+	public void shouldCreateSpanWithTagWhenAnnotationOnInterfaceMethod() {
+		testBean.testMethod5("test");
+		
+		Mockito.verify(tracer).addTag(Mockito.eq("testTag"), Mockito.eq("test"));
+		Mockito.verify(tracer).createSpan(Mockito.eq("testMethod5"), Mockito.<Span> any());
+		Mockito.reset(tracer);
 	}
 	
 	protected static interface TestBeanI {
@@ -49,6 +84,14 @@ public class SleuthSpanCreatorAdviceTest {
 		void testMethod();
 		
 		void testMethod2();
+		
+		void testMethod3();
+		
+		@CreateSleuthSpan(name = "testMethod4")
+		void testMethod4();
+		
+		@CreateSleuthSpan(name = "testMethod5")
+		void testMethod5(@SleuthSpanTag("testTag") String test);
 	}
 	
 	protected static class TestBean implements TestBeanI {
@@ -61,7 +104,19 @@ public class SleuthSpanCreatorAdviceTest {
 		@Override
 		public void testMethod2() {
 		}
+
+		@CreateSleuthSpan(name = "testMethod3")
+		@Override
+		public void testMethod3() {
+		}
+
+		@Override
+		public void testMethod4() {
+		}
 		
+		@Override
+		public void testMethod5(String test) {
+		}
 	}
 	
 	@Configuration
@@ -79,8 +134,15 @@ public class SleuthSpanCreatorAdviceTest {
 		}
 		
 		@Bean
-		public SleuthSpanCreator sleuthSpanCreator() {
-			return Mockito.mock(SleuthSpanCreator.class);
+		public SleuthSpanCreator sleuthSpanCreator(SleuthAnnotationSpanUtil annotationSpanUtil) {
+			
+			return new DefaultSleuthSpanCreator(tracer(), annotationSpanUtil);
+//			return Mockito.mock(SleuthSpanCreator.class);
+		}
+		
+		@Bean
+		public Tracer tracer() {
+			return Mockito.mock(Tracer.class);
 		}
 		
 	}

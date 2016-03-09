@@ -1,4 +1,4 @@
-package de.koizumi.sleuth.util;
+package de.koizumi.sleuth.annotation;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
@@ -17,9 +17,6 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.expression.Expression;
 import org.springframework.expression.ExpressionParser;
 import org.springframework.expression.spel.standard.SpelExpressionParser;
-
-import de.koizumi.sleuth.annotation.SleuthSpanTag;
-import de.koizumi.sleuth.resolver.SleuthTagValueResolver;
 
 public class SleuthAnnotationSpanUtil {
 

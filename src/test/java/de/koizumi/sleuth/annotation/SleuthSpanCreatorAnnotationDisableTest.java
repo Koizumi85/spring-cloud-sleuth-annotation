@@ -1,4 +1,4 @@
-package de.koizumi.sleuth.config;
+package de.koizumi.sleuth.annotation;
 
 import org.junit.Assert;
 import org.junit.Test;
@@ -8,7 +8,8 @@ import org.springframework.boot.test.IntegrationTest;
 import org.springframework.boot.test.SpringApplicationConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import de.koizumi.sleuth.util.SleuthAnnotationSpanUtil;
+import de.koizumi.sleuth.annotation.SleuthAnnotationConfiguration;
+import de.koizumi.sleuth.annotation.SleuthAnnotationSpanUtil;
 
 @SpringApplicationConfiguration(classes = SleuthAnnotationConfiguration.class)
 @RunWith(SpringJUnit4ClassRunner.class)

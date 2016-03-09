@@ -1,4 +1,4 @@
-package de.koizumi.sleuth.config;
+package de.koizumi.sleuth.annotation;
 
 import java.lang.reflect.Method;
 
@@ -7,9 +7,6 @@ import org.springframework.aop.support.AopUtils;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanPostProcessor;
-
-import de.koizumi.sleuth.advice.SleuthSpanCreatorAdvice;
-import de.koizumi.sleuth.util.SleuthAnnotationUtils;
 
 public class SleuthSpanCreateBeanPostProcessor implements BeanPostProcessor {
 	

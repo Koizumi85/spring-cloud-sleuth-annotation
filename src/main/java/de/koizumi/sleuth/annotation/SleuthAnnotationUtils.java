@@ -1,10 +1,8 @@
-package de.koizumi.sleuth.util;
+package de.koizumi.sleuth.annotation;
 
 import java.lang.reflect.Method;
 
 import org.springframework.core.annotation.AnnotationUtils;
-
-import de.koizumi.sleuth.annotation.CreateSleuthSpan;
 
 public class SleuthAnnotationUtils {
 

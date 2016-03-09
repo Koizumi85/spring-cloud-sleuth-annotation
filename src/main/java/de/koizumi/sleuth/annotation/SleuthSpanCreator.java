@@ -1,9 +1,7 @@
-package de.koizumi.sleuth.util;
+package de.koizumi.sleuth.annotation;
 
 import org.aspectj.lang.JoinPoint;
 import org.springframework.cloud.sleuth.Span;
-
-import de.koizumi.sleuth.annotation.CreateSleuthSpan;
 
 public interface SleuthSpanCreator {
 

@@ -1,4 +1,4 @@
-package de.koizumi.sleuth.advice;
+package de.koizumi.sleuth.annotation;
 
 import java.lang.reflect.Method;
 
@@ -12,10 +12,6 @@ import org.springframework.aop.support.AopUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.sleuth.Span;
 import org.springframework.cloud.sleuth.Tracer;
-
-import de.koizumi.sleuth.annotation.CreateSleuthSpan;
-import de.koizumi.sleuth.util.SleuthAnnotationUtils;
-import de.koizumi.sleuth.util.SleuthSpanCreator;
 
 @Aspect
 public class SleuthSpanCreatorAdvice {

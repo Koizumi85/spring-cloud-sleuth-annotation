@@ -1,7 +1,5 @@
-package de.koizumi.sleuth.util;
+package de.koizumi.sleuth.annotation;
 import java.lang.reflect.Parameter;
-
-import de.koizumi.sleuth.annotation.SleuthSpanTag;
 
 public class SleuthAnnotatedParameterContainer {
 

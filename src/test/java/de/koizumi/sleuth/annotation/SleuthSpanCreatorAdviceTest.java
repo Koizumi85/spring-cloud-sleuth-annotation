@@ -1,4 +1,4 @@
-package de.koizumi.sleuth;
+package de.koizumi.sleuth.annotation;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -14,13 +14,13 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import de.koizumi.sleuth.SleuthSpanCreatorAdviceTest.TestConfiguration;
 import de.koizumi.sleuth.annotation.CreateSleuthSpan;
+import de.koizumi.sleuth.annotation.DefaultSleuthSpanCreator;
+import de.koizumi.sleuth.annotation.SleuthAnnotationConfiguration;
+import de.koizumi.sleuth.annotation.SleuthAnnotationSpanUtil;
+import de.koizumi.sleuth.annotation.SleuthSpanCreator;
 import de.koizumi.sleuth.annotation.SleuthSpanTag;
-import de.koizumi.sleuth.config.SleuthAnnotationConfiguration;
-import de.koizumi.sleuth.util.DefaultSleuthSpanCreator;
-import de.koizumi.sleuth.util.SleuthAnnotationSpanUtil;
-import de.koizumi.sleuth.util.SleuthSpanCreator;
+import de.koizumi.sleuth.annotation.SleuthSpanCreatorAdviceTest.TestConfiguration;
 
 @SpringApplicationConfiguration(classes = TestConfiguration.class)
 @RunWith(SpringJUnit4ClassRunner.class)

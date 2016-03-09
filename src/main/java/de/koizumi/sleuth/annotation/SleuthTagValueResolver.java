@@ -1,4 +1,4 @@
-package de.koizumi.sleuth.resolver;
+package de.koizumi.sleuth.annotation;
 
 public interface SleuthTagValueResolver {
 

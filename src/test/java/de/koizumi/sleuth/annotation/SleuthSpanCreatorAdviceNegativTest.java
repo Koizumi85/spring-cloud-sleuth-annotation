@@ -1,4 +1,4 @@
-package de.koizumi.sleuth;
+package de.koizumi.sleuth.annotation;
 
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.junit.Before;
@@ -16,14 +16,14 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import de.koizumi.sleuth.SleuthSpanCreatorAdviceNegativTest.TestConfiguration;
-import de.koizumi.sleuth.advice.SleuthSpanCreatorAdvice;
 import de.koizumi.sleuth.annotation.CreateSleuthSpan;
+import de.koizumi.sleuth.annotation.DefaultSleuthSpanCreator;
+import de.koizumi.sleuth.annotation.SleuthAnnotationSpanUtil;
+import de.koizumi.sleuth.annotation.SleuthSpanCreateBeanPostProcessor;
+import de.koizumi.sleuth.annotation.SleuthSpanCreator;
+import de.koizumi.sleuth.annotation.SleuthSpanCreatorAdvice;
 import de.koizumi.sleuth.annotation.SleuthSpanTag;
-import de.koizumi.sleuth.config.SleuthSpanCreateBeanPostProcessor;
-import de.koizumi.sleuth.util.DefaultSleuthSpanCreator;
-import de.koizumi.sleuth.util.SleuthAnnotationSpanUtil;
-import de.koizumi.sleuth.util.SleuthSpanCreator;
+import de.koizumi.sleuth.annotation.SleuthSpanCreatorAdviceNegativTest.TestConfiguration;
 
 @SpringApplicationConfiguration(classes = TestConfiguration.class)
 @RunWith(SpringJUnit4ClassRunner.class)

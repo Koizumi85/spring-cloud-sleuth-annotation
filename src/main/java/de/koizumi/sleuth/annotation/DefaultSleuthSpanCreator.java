@@ -1,12 +1,10 @@
-package de.koizumi.sleuth.util;
+package de.koizumi.sleuth.annotation;
 
 import org.apache.commons.lang3.StringUtils;
 import org.aspectj.lang.JoinPoint;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.sleuth.Span;
 import org.springframework.cloud.sleuth.Tracer;
-
-import de.koizumi.sleuth.annotation.CreateSleuthSpan;
 
 public class DefaultSleuthSpanCreator implements SleuthSpanCreator {
 	

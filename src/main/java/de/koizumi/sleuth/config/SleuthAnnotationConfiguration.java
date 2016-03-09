@@ -2,18 +2,19 @@ package de.koizumi.sleuth.config;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.cloud.sleuth.Tracer;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import de.koizumi.sleuth.advice.SleuthSpanCreatorAdvice;
-import de.koizumi.sleuth.config.SleuthSpanCreateBeanPostProcessor;
 import de.koizumi.sleuth.util.DefaultSleuthSpanCreator;
 import de.koizumi.sleuth.util.SleuthAnnotationSpanUtil;
 import de.koizumi.sleuth.util.SleuthSpanCreator;
 
 @Configuration
+@ConditionalOnProperty(name = "spring.sleuth.annotation.enabled", havingValue = "true", matchIfMissing = true)
 public class SleuthAnnotationConfiguration {
 	
 	@Autowired

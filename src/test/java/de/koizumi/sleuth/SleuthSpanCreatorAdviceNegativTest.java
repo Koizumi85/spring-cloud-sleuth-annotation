@@ -1,5 +1,6 @@
 package de.koizumi.sleuth;
 
+import org.aspectj.lang.ProceedingJoinPoint;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -9,25 +10,33 @@ import org.springframework.boot.test.SpringApplicationConfiguration;
 import org.springframework.cloud.sleuth.Span;
 import org.springframework.cloud.sleuth.Tracer;
 import org.springframework.cloud.sleuth.autoconfig.TraceAutoConfiguration;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import de.koizumi.sleuth.SleuthSpanCreatorAdviceTest.TestConfiguration;
+import de.koizumi.sleuth.SleuthSpanCreatorAdviceNegativTest.TestConfiguration;
+import de.koizumi.sleuth.advice.SleuthSpanCreatorAdvice;
 import de.koizumi.sleuth.annotation.CreateSleuthSpan;
 import de.koizumi.sleuth.annotation.SleuthSpanTag;
-import de.koizumi.sleuth.config.SleuthAnnotationConfiguration;
+import de.koizumi.sleuth.config.SleuthSpanCreateBeanPostProcessor;
 import de.koizumi.sleuth.util.DefaultSleuthSpanCreator;
 import de.koizumi.sleuth.util.SleuthAnnotationSpanUtil;
 import de.koizumi.sleuth.util.SleuthSpanCreator;
 
 @SpringApplicationConfiguration(classes = TestConfiguration.class)
 @RunWith(SpringJUnit4ClassRunner.class)
-public class SleuthSpanCreatorAdviceTest {
+public class SleuthSpanCreatorAdviceNegativTest {
+
+	@Autowired
+	private NotAnnotatedTestBeanI testBean;
 	
 	@Autowired
-	private TestBeanI testBean;
+	private TestBeanI annotatedTestBean;
+	
+	@Autowired
+	private SleuthSpanCreatorAdviceHolder adviceHolder;
 	
 	@Autowired
 	private Tracer tracer;
@@ -36,63 +45,35 @@ public class SleuthSpanCreatorAdviceTest {
 	public void setup() {
 		Mockito.when(tracer.isTracing()).thenReturn(true);
 	}
-	
+
 	@Test
-	public void shouldCreateSpanWhenAnnotationOnInterfaceMethod() {
+	public void shouldNotCallAdviceForNotAnnotatedBean() {
 		testBean.testMethod();
+		
+		Mockito.verifyZeroInteractions(adviceHolder.advice);
+	}
+
+	@Test
+	public void shouldCallAdviceForAnnotatedBean() throws Throwable {
+		annotatedTestBean.testMethod();
 		
 		Mockito.verify(tracer).createSpan(Mockito.eq("TestBeanI/testMethod"), Mockito.<Span> any());
 		Mockito.reset(tracer);
+		Mockito.verify(adviceHolder.advice, Mockito.times(1)).instrumentOnMethodAnnotation(Mockito.<ProceedingJoinPoint> any());
+		
 	}
 	
-	@Test
-	public void shouldCreateSpanWhenAnnotationOnClassMethod() {
-		testBean.testMethod2();
-		
-		Mockito.verify(tracer).createSpan(Mockito.eq("TestBeanI/testMethod2"), Mockito.<Span> any());
-		Mockito.reset(tracer);
+	protected static interface NotAnnotatedTestBeanI {
+
+		void testMethod();
 	}
-	
-	@Test
-	public void shouldCreateSpanWithCustomNameWhenAnnotationOnClassMethod() {
-		testBean.testMethod3();
-		
-		Mockito.verify(tracer).createSpan(Mockito.eq("testMethod3"), Mockito.<Span> any());
-		Mockito.reset(tracer);
-	}
-	
-	@Test
-	public void shouldCreateSpanWithCustomNameWhenAnnotationOnInterfaceMethod() {
-		testBean.testMethod4();
-		
-		Mockito.verify(tracer).createSpan(Mockito.eq("testMethod4"), Mockito.<Span> any());
-		Mockito.reset(tracer);
-	}
-	
-	@Test
-	public void shouldCreateSpanWithTagWhenAnnotationOnInterfaceMethod() {
-		testBean.testMethod5("test");
-		
-		Mockito.verify(tracer).addTag(Mockito.eq("testTag"), Mockito.eq("test"));
-		Mockito.verify(tracer).createSpan(Mockito.eq("testMethod5"), Mockito.<Span> any());
-		Mockito.reset(tracer);
-	}
-	
-	@Test
-	public void shouldCreateSpanWithTagWhenAnnotationOnClassMethod() {
-		testBean.testMethod6("test");
-		
-		Mockito.verify(tracer).addTag(Mockito.eq("testTag6"), Mockito.eq("test"));
-		Mockito.verify(tracer).createSpan(Mockito.eq("testMethod6"), Mockito.<Span> any());
-		Mockito.reset(tracer);
-	}
-	
-	@Test
-	public void shouldNotCreateSpanWhenNotAnnotated() {
-		testBean.testMethod7();
-		
-		Mockito.verifyZeroInteractions(tracer);
-		Mockito.reset(tracer);
+
+	protected static class NotAnnotatedTestBean implements NotAnnotatedTestBeanI {
+
+		@Override
+		public void testMethod() {
+		}
+
 	}
 	
 	protected static interface TestBeanI {
@@ -149,30 +130,70 @@ public class SleuthSpanCreatorAdviceTest {
 		public void testMethod7() {
 		}
 	}
-	
+
 	@Configuration
-	@Import({ TraceAutoConfiguration.class, CreateSleuthTestConfiguration.class, SleuthAnnotationConfiguration.class })
+	@Import({ TraceAutoConfiguration.class, CreateSleuthTestConfiguration.class })
 	protected static class TestConfiguration {
-		
+
 	}
-	
+
 	@Configuration
 	protected static class CreateSleuthTestConfiguration {
-
+		
 		@Bean
-		public TestBeanI testBean() {
-			return new TestBean();
+		public SleuthSpanCreatorAdviceHolder adviceHolder(SleuthSpanCreator spanCreator) {
+			SleuthSpanCreatorAdvice advice = new SleuthSpanCreatorAdvice(spanCreator, tracer());
+			advice = Mockito.spy(advice);
+			SleuthSpanCreatorAdviceHolder adviceHolder = new SleuthSpanCreatorAdviceHolder();
+			adviceHolder.setAdvice(advice);
+			return adviceHolder;
 		}
 		
+		@Bean
+		public SleuthAnnotationSpanUtil spanUtil(ApplicationContext context) {
+			return new SleuthAnnotationSpanUtil(context, tracer());
+		}
+
+		@Bean
+		public SleuthSpanCreateBeanPostProcessor sleuthSpanCreateBeanPostProcessor(SleuthSpanCreatorAdviceHolder adviceHolder) {
+			SleuthSpanCreateBeanPostProcessor postProcessor = new SleuthSpanCreateBeanPostProcessor(adviceHolder.advice);
+			return postProcessor;
+		}
+
+		@Bean
+		public NotAnnotatedTestBeanI testBean() {
+			return new NotAnnotatedTestBean();
+		}
+
 		@Bean
 		public SleuthSpanCreator sleuthSpanCreator(SleuthAnnotationSpanUtil annotationSpanUtil) {
 			return new DefaultSleuthSpanCreator(tracer(), annotationSpanUtil);
 		}
 		
 		@Bean
+		public TestBeanI annotatedTestBean() {
+			return new TestBean();
+		}
+		
+		@Bean
 		public Tracer tracer() {
 			return Mockito.mock(Tracer.class);
 		}
+
+	}
+	
+	protected static class SleuthSpanCreatorAdviceHolder {
+		
+		private SleuthSpanCreatorAdvice advice;
+
+		public SleuthSpanCreatorAdvice getAdvice() {
+			return advice;
+		}
+
+		public void setAdvice(SleuthSpanCreatorAdvice advice) {
+			this.advice = advice;
+		}
+		
 		
 	}
 }

@@ -63,7 +63,7 @@ public class SleuthSpanCreatorAdviceNegativTest {
 		
 	}
 	
-	protected static interface NotAnnotatedTestBeanI {
+	protected interface NotAnnotatedTestBeanI {
 
 		void testMethod();
 	}
@@ -76,7 +76,7 @@ public class SleuthSpanCreatorAdviceNegativTest {
 
 	}
 	
-	protected static interface TestBeanI {
+	protected interface TestBeanI {
 		
 		@CreateSleuthSpan
 		void testMethod();

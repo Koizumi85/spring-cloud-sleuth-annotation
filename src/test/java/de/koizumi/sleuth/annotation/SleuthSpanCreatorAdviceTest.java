@@ -89,7 +89,7 @@ public class SleuthSpanCreatorAdviceTest {
 		Mockito.verifyZeroInteractions(tracer);
 	}
 	
-	protected static interface TestBeanI {
+	protected interface TestBeanI {
 		
 		@CreateSleuthSpan
 		void testMethod();

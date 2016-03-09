@@ -43,6 +43,7 @@ public class SleuthSpanCreatorAdviceNegativTest {
 	
 	@Before
 	public void setup() {
+		Mockito.reset(tracer);
 		Mockito.when(tracer.isTracing()).thenReturn(true);
 	}
 
@@ -58,8 +59,7 @@ public class SleuthSpanCreatorAdviceNegativTest {
 		annotatedTestBean.testMethod();
 		
 		Mockito.verify(tracer).createSpan(Mockito.eq("TestBeanI/testMethod"), Mockito.<Span> any());
-		Mockito.reset(tracer);
-		Mockito.verify(adviceHolder.advice, Mockito.times(1)).instrumentOnMethodAnnotation(Mockito.<ProceedingJoinPoint> any());
+		Mockito.verify(adviceHolder.advice).instrumentOnMethodAnnotation(Mockito.<ProceedingJoinPoint> any());
 		
 	}
 	

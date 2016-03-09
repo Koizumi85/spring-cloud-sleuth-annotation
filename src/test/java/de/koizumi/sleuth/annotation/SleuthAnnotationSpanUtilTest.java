@@ -1,5 +1,6 @@
 package de.koizumi.sleuth.annotation;
 
+import static org.assertj.core.api.Assertions.*;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 
@@ -38,10 +39,10 @@ public class SleuthAnnotationSpanUtilTest {
 		Annotation annotation = method.getParameterAnnotations()[0][0];
 		if (annotation instanceof SleuthSpanTag) {
 			String resolvedValue = spanUtil.resolveTagValue((SleuthSpanTag) annotation, "test");
-			Assert.assertEquals("Value from myCustomTagValueResolver", resolvedValue);
+			assertThat(resolvedValue).isEqualTo("Value from myCustomTagValueResolver");
 			Mockito.verify(tagValueResolver).resolveTagValue("test");
 		} else {
-			Assert.fail("Annotation was not SleuthSpanTag");
+			fail("Annotation was not SleuthSpanTag");
 		}
 	}
 	
@@ -51,9 +52,10 @@ public class SleuthAnnotationSpanUtilTest {
 		Annotation annotation = method.getParameterAnnotations()[0][0];
 		if (annotation instanceof SleuthSpanTag) {
 			String resolvedValue = spanUtil.resolveTagValue((SleuthSpanTag) annotation, "test");
-			Assert.assertEquals("4 characters", resolvedValue);
+			
+			assertThat(resolvedValue).isEqualTo("4 characters");
 		} else {
-			Assert.fail("Annotation was not SleuthSpanTag");
+			fail("Annotation was not SleuthSpanTag");
 		}
 	}
 	
@@ -63,9 +65,9 @@ public class SleuthAnnotationSpanUtilTest {
 		Annotation annotation = method.getParameterAnnotations()[0][0];
 		if (annotation instanceof SleuthSpanTag) {
 			String resolvedValue = spanUtil.resolveTagValue((SleuthSpanTag) annotation, "test");
-			Assert.assertEquals("test", resolvedValue);
+			assertThat(resolvedValue).isEqualTo("test");
 		} else {
-			Assert.fail("Annotation was not SleuthSpanTag");
+			fail("Annotation was not SleuthSpanTag");
 		}
 	}
 	

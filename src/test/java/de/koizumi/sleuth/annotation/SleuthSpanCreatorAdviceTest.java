@@ -34,6 +34,7 @@ public class SleuthSpanCreatorAdviceTest {
 	
 	@Before
 	public void setup() {
+		Mockito.reset(tracer);
 		Mockito.when(tracer.isTracing()).thenReturn(true);
 	}
 	
@@ -42,7 +43,6 @@ public class SleuthSpanCreatorAdviceTest {
 		testBean.testMethod();
 		
 		Mockito.verify(tracer).createSpan(Mockito.eq("TestBeanI/testMethod"), Mockito.<Span> any());
-		Mockito.reset(tracer);
 	}
 	
 	@Test
@@ -50,7 +50,6 @@ public class SleuthSpanCreatorAdviceTest {
 		testBean.testMethod2();
 		
 		Mockito.verify(tracer).createSpan(Mockito.eq("TestBeanI/testMethod2"), Mockito.<Span> any());
-		Mockito.reset(tracer);
 	}
 	
 	@Test
@@ -58,7 +57,6 @@ public class SleuthSpanCreatorAdviceTest {
 		testBean.testMethod3();
 		
 		Mockito.verify(tracer).createSpan(Mockito.eq("testMethod3"), Mockito.<Span> any());
-		Mockito.reset(tracer);
 	}
 	
 	@Test
@@ -66,7 +64,6 @@ public class SleuthSpanCreatorAdviceTest {
 		testBean.testMethod4();
 		
 		Mockito.verify(tracer).createSpan(Mockito.eq("testMethod4"), Mockito.<Span> any());
-		Mockito.reset(tracer);
 	}
 	
 	@Test
@@ -75,7 +72,6 @@ public class SleuthSpanCreatorAdviceTest {
 		
 		Mockito.verify(tracer).addTag(Mockito.eq("testTag"), Mockito.eq("test"));
 		Mockito.verify(tracer).createSpan(Mockito.eq("testMethod5"), Mockito.<Span> any());
-		Mockito.reset(tracer);
 	}
 	
 	@Test
@@ -84,7 +80,6 @@ public class SleuthSpanCreatorAdviceTest {
 		
 		Mockito.verify(tracer).addTag(Mockito.eq("testTag6"), Mockito.eq("test"));
 		Mockito.verify(tracer).createSpan(Mockito.eq("testMethod6"), Mockito.<Span> any());
-		Mockito.reset(tracer);
 	}
 	
 	@Test
@@ -92,7 +87,6 @@ public class SleuthSpanCreatorAdviceTest {
 		testBean.testMethod7();
 		
 		Mockito.verifyZeroInteractions(tracer);
-		Mockito.reset(tracer);
 	}
 	
 	protected static interface TestBeanI {

@@ -15,7 +15,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 public class SleuthSpanCreatorAnnotationDisableTest {
 
 	@Autowired(required = false)
-	private SleuthAnnotationSpanUtil annotationSpanUtil;
+	private SleuthSpanTagAnnotationHandler annotationSpanUtil;
 	
 	@Test
 	public void shouldNotAutowireBecauseConfigIsDisabled() {

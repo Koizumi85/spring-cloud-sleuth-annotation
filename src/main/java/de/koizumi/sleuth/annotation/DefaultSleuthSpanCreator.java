@@ -9,10 +9,10 @@ import org.springframework.cloud.sleuth.Tracer;
 public class DefaultSleuthSpanCreator implements SleuthSpanCreator {
 	
 	private Tracer tracer;
-	private SleuthAnnotationSpanUtil annotationSpanUtil;
+	private SleuthSpanTagAnnotationHandler annotationSpanUtil;
 
 	@Autowired
-	public DefaultSleuthSpanCreator(Tracer tracer, SleuthAnnotationSpanUtil annotationSpanUtil) {
+	public DefaultSleuthSpanCreator(Tracer tracer, SleuthSpanTagAnnotationHandler annotationSpanUtil) {
 		this.tracer = tracer;
 		this.annotationSpanUtil = annotationSpanUtil;
 	}

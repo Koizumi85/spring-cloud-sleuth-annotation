@@ -17,14 +17,14 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import de.koizumi.sleuth.annotation.SleuthAnnotationSpanUtilTest.TestConfiguration;
+import de.koizumi.sleuth.annotation.SleuthSpanTagAnnotationHandlerTest.TestConfiguration;
 
 @SpringApplicationConfiguration(classes = TestConfiguration.class)
 @RunWith(SpringJUnit4ClassRunner.class)
-public class SleuthAnnotationSpanUtilTest {
+public class SleuthSpanTagAnnotationHandlerTest {
 
 	@Autowired
-	private SleuthAnnotationSpanUtil spanUtil;
+	private SleuthSpanTagAnnotationHandler spanUtil;
 	
 	@Autowired
 	private SleuthTagValueResolver tagValueResolver;

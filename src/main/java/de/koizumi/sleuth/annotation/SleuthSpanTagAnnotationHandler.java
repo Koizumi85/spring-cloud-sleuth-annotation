@@ -18,14 +18,14 @@ import org.springframework.expression.Expression;
 import org.springframework.expression.ExpressionParser;
 import org.springframework.expression.spel.standard.SpelExpressionParser;
 
-public class SleuthAnnotationSpanUtil {
+public class SleuthSpanTagAnnotationHandler {
 
 	private ApplicationContext context;
 
 	private Tracer tracer;
 
 	@Autowired
-	public SleuthAnnotationSpanUtil(ApplicationContext context, Tracer tracer) {
+	public SleuthSpanTagAnnotationHandler(ApplicationContext context, Tracer tracer) {
 		this.context = context;
 		this.tracer = tracer;
 	}

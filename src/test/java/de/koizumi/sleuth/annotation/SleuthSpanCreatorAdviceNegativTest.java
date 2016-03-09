@@ -18,7 +18,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import de.koizumi.sleuth.annotation.CreateSleuthSpan;
 import de.koizumi.sleuth.annotation.DefaultSleuthSpanCreator;
-import de.koizumi.sleuth.annotation.SleuthAnnotationSpanUtil;
+import de.koizumi.sleuth.annotation.SleuthSpanTagAnnotationHandler;
 import de.koizumi.sleuth.annotation.SleuthSpanCreateBeanPostProcessor;
 import de.koizumi.sleuth.annotation.SleuthSpanCreator;
 import de.koizumi.sleuth.annotation.SleuthSpanCreatorAdvice;
@@ -150,8 +150,8 @@ public class SleuthSpanCreatorAdviceNegativTest {
 		}
 		
 		@Bean
-		public SleuthAnnotationSpanUtil spanUtil(ApplicationContext context) {
-			return new SleuthAnnotationSpanUtil(context, tracer());
+		public SleuthSpanTagAnnotationHandler spanUtil(ApplicationContext context) {
+			return new SleuthSpanTagAnnotationHandler(context, tracer());
 		}
 
 		@Bean
@@ -166,7 +166,7 @@ public class SleuthSpanCreatorAdviceNegativTest {
 		}
 
 		@Bean
-		public SleuthSpanCreator sleuthSpanCreator(SleuthAnnotationSpanUtil annotationSpanUtil) {
+		public SleuthSpanCreator sleuthSpanCreator(SleuthSpanTagAnnotationHandler annotationSpanUtil) {
 			return new DefaultSleuthSpanCreator(tracer(), annotationSpanUtil);
 		}
 		

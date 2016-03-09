@@ -16,8 +16,8 @@ public class SleuthAnnotationConfiguration {
 	private Tracer tracer;
 	
 	@Bean
-	public SleuthAnnotationSpanUtil spanUtil(ApplicationContext context) {
-		return new SleuthAnnotationSpanUtil(context, tracer);
+	public SleuthSpanTagAnnotationHandler spanUtil(ApplicationContext context) {
+		return new SleuthSpanTagAnnotationHandler(context, tracer);
 	}
 
 	@ConditionalOnMissingBean(SleuthSpanCreator.class)

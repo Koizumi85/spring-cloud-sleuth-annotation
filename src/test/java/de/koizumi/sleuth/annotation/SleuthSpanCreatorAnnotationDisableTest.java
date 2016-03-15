@@ -9,7 +9,7 @@ import org.springframework.boot.test.IntegrationTest;
 import org.springframework.boot.test.SpringApplicationConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-@SpringApplicationConfiguration(classes = SleuthAnnotationConfiguration.class)
+@SpringApplicationConfiguration(classes = CreateSleuthSpanAdvisorConfiguration.class)
 @RunWith(SpringJUnit4ClassRunner.class)
 @IntegrationTest(value = "spring.sleuth.annotation.enabled=false")
 public class SleuthSpanCreatorAnnotationDisableTest {

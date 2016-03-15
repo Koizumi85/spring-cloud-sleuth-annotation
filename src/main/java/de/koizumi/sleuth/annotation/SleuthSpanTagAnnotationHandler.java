@@ -6,10 +6,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Predicate;
 
+import org.aopalliance.intercept.MethodInvocation;
 import org.apache.commons.lang3.StringUtils;
-import org.aspectj.lang.JoinPoint;
-import org.aspectj.lang.Signature;
-import org.aspectj.lang.reflect.MethodSignature;
 import org.springframework.aop.support.AopUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.sleuth.Tracer;
@@ -30,24 +28,21 @@ public class SleuthSpanTagAnnotationHandler {
 		this.tracer = tracer;
 	}
 
-	public void addAnnotatedParameters(JoinPoint pjp) {
+	public void addAnnotatedParameters(MethodInvocation methodInvocation) {
 		try {
-			Signature signature = pjp.getStaticPart().getSignature();
-			if (signature instanceof MethodSignature) {
-				MethodSignature ms = (MethodSignature) signature;
-				Method method = ms.getMethod();
-				Method mostSpecificMethod = AopUtils.getMostSpecificMethod(method, pjp.getTarget().getClass());
+			Method method = methodInvocation.getMethod();
+			Method mostSpecificMethod = AopUtils.getMostSpecificMethod(method, methodInvocation.getThis().getClass());
 
-				List<SleuthAnnotatedParameterContainer> annotatedParametersIndices = findAnnotatedParameters(
-						mostSpecificMethod, pjp.getArgs());
-				if (!method.equals(mostSpecificMethod)) {
-					List<SleuthAnnotatedParameterContainer> annotatedParametersIndicesForActualMethod = findAnnotatedParameters(
-							method, pjp.getArgs());
-					mergeAnnotatedParameterContainers(annotatedParametersIndices, annotatedParametersIndicesForActualMethod);
-				}
-
-				addAnnotatedArguments(annotatedParametersIndices);
+			List<SleuthAnnotatedParameterContainer> annotatedParametersIndices = findAnnotatedParameters(
+					mostSpecificMethod, methodInvocation.getArguments());
+			if (!method.equals(mostSpecificMethod)) {
+				List<SleuthAnnotatedParameterContainer> annotatedParametersIndicesForActualMethod = findAnnotatedParameters(
+						method, methodInvocation.getArguments());
+				mergeAnnotatedParameterContainers(annotatedParametersIndices,
+						annotatedParametersIndicesForActualMethod);
 			}
+
+			addAnnotatedArguments(annotatedParametersIndices);
 
 		} catch (SecurityException e) {
 			e.printStackTrace();

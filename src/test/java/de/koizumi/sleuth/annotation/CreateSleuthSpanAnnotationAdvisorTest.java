@@ -14,17 +14,12 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import de.koizumi.sleuth.annotation.CreateSleuthSpan;
-import de.koizumi.sleuth.annotation.DefaultSleuthSpanCreator;
-import de.koizumi.sleuth.annotation.SleuthAnnotationConfiguration;
-import de.koizumi.sleuth.annotation.SleuthSpanTagAnnotationHandler;
-import de.koizumi.sleuth.annotation.SleuthSpanCreator;
-import de.koizumi.sleuth.annotation.SleuthSpanTag;
-import de.koizumi.sleuth.annotation.SleuthSpanCreatorAdviceTest.TestConfiguration;
+import de.koizumi.sleuth.annotation.CreateSleuthSpanAnnotationAdvisorTest.TestConfiguration;
+
 
 @SpringApplicationConfiguration(classes = TestConfiguration.class)
 @RunWith(SpringJUnit4ClassRunner.class)
-public class SleuthSpanCreatorAdviceTest {
+public class CreateSleuthSpanAnnotationAdvisorTest {
 	
 	@Autowired
 	private TestBeanI testBean;
@@ -88,8 +83,9 @@ public class SleuthSpanCreatorAdviceTest {
 		
 		Mockito.verifyZeroInteractions(tracer);
 	}
+
 	
-	protected interface TestBeanI {
+protected interface TestBeanI {
 		
 		@CreateSleuthSpan
 		void testMethod();
@@ -145,7 +141,7 @@ public class SleuthSpanCreatorAdviceTest {
 	}
 	
 	@Configuration
-	@Import({ TraceAutoConfiguration.class, CreateSleuthTestConfiguration.class, SleuthAnnotationConfiguration.class })
+	@Import({ TraceAutoConfiguration.class, CreateSleuthTestConfiguration.class, CreateSleuthSpanAdvisorConfiguration.class })
 	protected static class TestConfiguration {
 		
 	}
@@ -156,11 +152,6 @@ public class SleuthSpanCreatorAdviceTest {
 		@Bean
 		public TestBeanI testBean() {
 			return new TestBean();
-		}
-		
-		@Bean
-		public SleuthSpanCreator sleuthSpanCreator(SleuthSpanTagAnnotationHandler annotationSpanUtil) {
-			return new DefaultSleuthSpanCreator(tracer(), annotationSpanUtil);
 		}
 		
 		@Bean

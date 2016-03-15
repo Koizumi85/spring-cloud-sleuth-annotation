@@ -2,19 +2,19 @@ package de.koizumi.sleuth.annotation;
 
 import java.lang.reflect.Method;
 
-import org.springframework.aop.aspectj.annotation.AspectJProxyFactory;
+import org.springframework.aop.framework.ProxyFactory;
 import org.springframework.aop.support.AopUtils;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanPostProcessor;
 
-public class SleuthSpanCreateBeanPostProcessor implements BeanPostProcessor {
-	
-	private SleuthSpanCreatorAdvice advice;
+public class CreateSleuthSpanBeanPostProcessor implements BeanPostProcessor {
+
+	private CreateSleuthSpanAnnotationAdvisor advisor;
 
 	@Autowired
-	public SleuthSpanCreateBeanPostProcessor(SleuthSpanCreatorAdvice advice) {
-		this.advice = advice;
+	public CreateSleuthSpanBeanPostProcessor(CreateSleuthSpanAnnotationAdvisor advisor) {
+		this.advisor = advisor;
 	}
 	
 	@Override
@@ -42,15 +42,15 @@ public class SleuthSpanCreateBeanPostProcessor implements BeanPostProcessor {
 				}
 			}
 		}
+		
 
 		if (!atLeastOneMethodAnnotated) {
 			return bean;
 		}
 		
-		AspectJProxyFactory factory = new AspectJProxyFactory(bean);
-		factory.addAspect(advice);
-		Object proxy = factory.getProxy();
-		return proxy;
+		ProxyFactory factory = new ProxyFactory(bean);
+		factory.addAdvisor(advisor);
+		return factory.getProxy();
 	}
 
 }

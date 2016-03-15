@@ -80,7 +80,7 @@ public class SleuthSpanTagAnnotationHandlerTest {
 	}
 	
 	@Configuration
-	@Import({ TraceAutoConfiguration.class, CreateSleuthTestConfiguration.class, SleuthAnnotationConfiguration.class })
+	@Import({ TraceAutoConfiguration.class, CreateSleuthTestConfiguration.class, CreateSleuthSpanAdvisorConfiguration.class })
 	protected static class TestConfiguration {
 		
 	}
